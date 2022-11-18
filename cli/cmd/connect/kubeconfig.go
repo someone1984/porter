@@ -87,12 +87,12 @@ func Kubeconfig(
 					if err != nil {
 						return 0, err
 					}
-				case types.ClusterLocalhost:
-					err := resolveLocalhostAction(allResolver)
-
-					if err != nil {
-						return 0, err
-					}
+				//case types.ClusterLocalhost:
+				//	err := resolveLocalhostAction(allResolver)
+				//
+				//	if err != nil {
+				//		return 0, err
+				//	}
 				case types.ClientCertData:
 					absKubeconfigPath, err := local.ResolveKubeconfigPath(kubeconfigPath)
 
