@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/porter-dev/porter/api/types"
-	"sigs.k8s.io/aws-iam-authenticator/pkg/token"
 )
 
 // AWSIntegration is an auth mechanism that uses a AWS IAM user to
@@ -110,50 +109,50 @@ func (a *AWSIntegration) GetBearerToken(
 	clusterID string,
 	shouldClusterIdOverride bool,
 ) (string, error) {
-	cache, err := getTokenCache()
+	//cache, err := getTokenCache()
+	//
+	//// check the token cache for a non-expired token
+	//if cache != nil {
+	//	if tok := cache.Token; err == nil && !cache.IsExpired() && len(tok) > 0 {
+	//		return string(tok), nil
+	//	}
+	//}
+	//
+	//generator, err := token.NewGenerator(false, false)
+	//
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//sess, err := a.GetSession()
+	//
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//var validClusterId string
+	//
+	//if shouldClusterIdOverride {
+	//	validClusterId = clusterID
+	//} else {
+	//	validClusterId = string(a.AWSClusterID)
+	//
+	//	if validClusterId == "" {
+	//		validClusterId = clusterID
+	//	}
+	//}
 
-	// check the token cache for a non-expired token
-	if cache != nil {
-		if tok := cache.Token; err == nil && !cache.IsExpired() && len(tok) > 0 {
-			return string(tok), nil
-		}
-	}
+	//tok, err := generator.GetWithOptions(&token.GetTokenOptions{
+	//	AssumeRoleARN: a.AWSAssumeRoleArn,
+	//	Session:       sess,
+	//	ClusterID:     validClusterId,
+	//})
+	//
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//setTokenCache(tok.Token, tok.Expiration)
 
-	generator, err := token.NewGenerator(false, false)
-
-	if err != nil {
-		return "", err
-	}
-
-	sess, err := a.GetSession()
-
-	if err != nil {
-		return "", err
-	}
-
-	var validClusterId string
-
-	if shouldClusterIdOverride {
-		validClusterId = clusterID
-	} else {
-		validClusterId = string(a.AWSClusterID)
-
-		if validClusterId == "" {
-			validClusterId = clusterID
-		}
-	}
-
-	tok, err := generator.GetWithOptions(&token.GetTokenOptions{
-		AssumeRoleARN: a.AWSAssumeRoleArn,
-		Session:       sess,
-		ClusterID:     validClusterId,
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	setTokenCache(tok.Token, tok.Expiration)
-
-	return tok.Token, nil
+	return "", nil
 }
