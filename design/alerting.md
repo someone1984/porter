@@ -48,27 +48,15 @@ short-lived spikes because they may be normal.
 The initial hard-coded rules are listed below. The exact numbers to be
 calibrated with real-world usage. For example, we would not want to fire an alert
 when container just gets started and CPU usage is high for a short period of time.
-> TODO(muvaf): See if alert-manager provides enough syntax to add such filtering
-> logic to the rules.
-* CPU spike alert that will fire when average usage of the CPU in the last 5
-  minutes is 25% above the average usage of the last 30 minutes. 
+* CPU spike alert that will fire when average usage of the CPU in the last 3
+  minutes is 3 times of the average usage of the last 10 minutes. We do not want
+  to account for CPU usages under `0.5` since the rate is very noisy below that
+  level.
     ```promql
     sum by (namespace, pod, container) (
-      rate(container_cpu_usage_seconds_total{container!=""}[5m]) / rate(container_cpu_usage_seconds_total{container!=""}[30m])
-    ) * on (pod, namespace) group_left(node) (kube_pod_info) > 1.25
-    ```
-    Example label set on returned data:
-    ```
-    {container="web", namespace="default", node="kind-control-plane", pod="stressing-the-cluster-web-6b457d4774-plfkn"}
-    ```
-* CPU throttling alert that will fire when Linux kernel reports that it had to
-  throttle a certain container since it reached its CPU limit. We report any
-  throttling that is above 5% of the total CPU time since it's critical for
-  applications to serve users.
-    ```promql
-    sum by (namespace, pod, container) (
-      rate(container_cpu_cfs_throttled_seconds_total{container!=""}[5m])
-    ) * on (pod, namespace) group_left(node) (kube_pod_info) > 0.05
+      rate(container_cpu_usage_seconds_total{container!=""}[3m]) > 0.5 /
+      rate(container_cpu_usage_seconds_total{container!=""}[10m]) > 0.5
+    ) * on (pod, namespace) group_left(node) (kube_pod_info) > 3.0
     ```
     Example label set on returned data:
     ```
